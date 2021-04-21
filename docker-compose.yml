@@ -16,6 +16,7 @@ services:
         environment:
             - DB_NAME=app
             - FLASK_APP=main.py
+            - FLASK_ENV=development
         stdin_open:
             true
         tty:
