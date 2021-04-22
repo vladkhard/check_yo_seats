@@ -10,13 +10,11 @@ services:
         working_dir:
             /app
         command:
-            "flask run --host=0.0.0.0 --port=8000"
+            "uvicorn main:app --reload --host=0.0.0.0 --port=8000"
         depends_on:
             - db
         environment:
             - DB_NAME=app
-            - FLASK_APP=main.py
-            - FLASK_ENV=development
         stdin_open:
             true
         tty:

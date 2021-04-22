@@ -1,36 +1,18 @@
-import json
 import uuid
 
+from pydantic import BaseModel, EmailStr, Field
 
-class User:
-    table_name: str = "user"
 
-    _id: uuid.UUID
-    name: str
-    email: str
-    password: str = None
-    friends: list[uuid.UUID] = []
-    added_places: list[uuid.UUID] = []
-
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
-        self._id = uuid.uuid4().hex
-
-    def to_json(self):
-        return json.dumps({
-            "name": self.name,
-            "email": self.email,
-            "friends": self.friends,
-            "added_places": self.added_places,
-        })
+class User(BaseModel):
+    _table_name = "user"
     
-    def to_dict(self):
-        return {
-            "_id": self._id,
-            "name": self.name,
-            "email": self.email,
-            "password": self.password,
-            "friends": self.friends,
-            "added_places": self.added_places,
-        }
+    @property
+    def table_name(self):
+        return self._table_name
+
+    _id: uuid.UUID = uuid.uuid4()
+    name: str
+    email: EmailStr
+    friends: list[uuid.UUID] = Field(default_factory=lambda: [])
+    added_places: list[uuid.UUID] = Field(default_factory=lambda: [])
+    password: str

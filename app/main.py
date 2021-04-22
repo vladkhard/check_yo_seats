@@ -1,24 +1,24 @@
-from flask import Flask, request
+import uuid
+
+from fastapi import FastAPI
 
 import db
 from models import User
 
 
-app = Flask(__name__)
+app = FastAPI()
 
 
-@app.route("/")
-def hello_world():
-    return "Hello, World!"
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-@app.route("/users/<int:_id>")
-def get_user(_id: int, methods=["GET"]):
-    data = db.get(User, _id)
-    return data
+@app.post("/users")
+async def post_user(user: User):
+    db.post(user)    
+    return user.dict(exclude={"password"}) | {"_id": user._id.hex}
 
-@app.route("/users", methods=["POST"])
-def post_user():
-    data = request.json
-    user = User(**data)
-    db.post(user)
-    return user.to_json()
+@app.get("/users/{user_id}")
+async def get_user(user_id: uuid.UUID):
+    user = db.get(User, user_id.hex)
+    return user.json(exclude={"password"})

@@ -8,10 +8,9 @@ db = CLIENT[DB_NAME]
 
 
 def get(model, _id):
-    table = model.table_name
-    return db[table].find_one(_id)
-
+    table = model._table_name
+    return model.parse_obj(db[table].find_one(_id))
 
 def post(instance):
     table = instance.table_name
-    return db[table].insert(instance.to_dict())
+    return db[table].insert(instance.dict() | {"_id": instance._id.hex})
